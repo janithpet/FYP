@@ -91,10 +91,10 @@ class pythonRFMod(yarp.RFModule):
 
         self.tempImage.copy(self.inputImage)
 
-        for i in range(0,h-1):
-            for j in range(0,w-1):
-                self.imgBuffer[i,j] = self.imgArray[h-1,w-1-j]
-        self.imgArray = self.imgBuffer
+        # for i in range(0,h-1):
+        #     for j in range(0,w-1):
+        #         self.imgBuffer[i,j] = self.imgArray[h-1,w-1-j]
+        # self.imgArray = self.imgBuffer
 
         self.imgArray[:50, :50] = 0
 
