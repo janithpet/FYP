@@ -5,7 +5,6 @@ import pylab
 import os
 
 def setupEnvironment(**optionalParameters):
-
     if 'defaultEnvironment' in optionalParameters:
         defaultEnvironment = optionalParameters['defaultEnvironment']
     else:
@@ -58,18 +57,22 @@ def setupEnvironment(**optionalParameters):
     elif type(dummySpaceDiscrete) == type(action):
         inputsNumpy = np.zeros((1,observations.shape[0] + 1))
 
-    return env, observations, inputsNumpy, observationsNumpy, action, predictionPDF
+    testSample = action.sample()
+    [testObservation, testRewards, done, info] = env.step(testSample)
+    rewardsNumpy = np.zeros((1,testRewards.size))
 
-def generateInputArray(inputsNumpy, action, observations, attempt):
+    return env, observations, inputsNumpy, observationsNumpy, rewardsNumpy, action, predictionPDF
 
+def appendInputArray(inputsNumpy, action, observations, attempt):
     actionToTake = action.sample()
+
     if type(actionToTake) == int:
         bufferActionToTake = np.array([actionToTake])
     else:
         bufferActionToTake = actionToTake
-    print bufferActionToTake
     bufferAction = np.array([bufferActionToTake])
     bufferStateCurrent = np.asarray([observations])
+    
     bufferInput = np.append(bufferAction, bufferStateCurrent, axis = 1)
 
     if attempt == 0:
@@ -79,7 +82,18 @@ def generateInputArray(inputsNumpy, action, observations, attempt):
 
     return inputsNumpy, bufferInput, actionToTake
 
-def generateObservations(observationsNumpy, observations, attempt):
+def appendRewardsArray(rewardsNumpy, rewards, attempt):
+    bufferRewards = np.asarray([rewards])
+    bufferRewards = np.reshape(bufferRewards, ([1,1]))
+
+    if attempt == 0:
+        rewardsNumpy = bufferRewards
+    elif attempt > 0:
+        rewardsNumpy = np.append(rewardsNumpy, bufferRewards, axis = 0)
+
+    return rewardsNumpy, bufferRewards
+
+def appendObservationsArray(observationsNumpy, observations, attempt):
     bufferObservations = np.asarray([observations])
 
     if attempt == 0:
@@ -88,6 +102,18 @@ def generateObservations(observationsNumpy, observations, attempt):
         observationsNumpy = np.append(observationsNumpy, bufferObservations, axis = 0)
 
     return observationsNumpy, bufferObservations
+
+def appendPolicyParameters(policyParameters, policyParametersNumpy, attempt_policy):
+    if attempt_policy == 0:
+        policyParametersNumpy = policyParameters
+
+    policyParametersNumpy = np.append(policyParametersNumpy, policyParameters, axis = 0)
+
+def appendTotalRewards(totalRewards, totalRewardsNumpy, attempt_policy):
+    if attempt_policy == 0:
+        totalRewardsNumpy = totalRewards
+
+    totalRewardsNumpy = np.append(totalRewardsNumpy, totalRewards, axis = 0)
 
 def generateModel(inputsNumpy, observationsNumpy, k):
     m = GPy.models.GPRegression(inputsNumpy, observationsNumpy, k)
