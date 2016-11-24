@@ -24,7 +24,7 @@ def setupEnvironment(**optionalParameters):
         environmentToUse = defaultEnvironment
 
     env = gym.make(environmentToUse)
-    observations = env.reset()
+    observations = env.reset(optionalParameters['whichVersion'])
     action = env.action_space
 
     check = True
@@ -63,15 +63,15 @@ def setupEnvironment(**optionalParameters):
 
     return env, observations, inputsNumpy, observationsNumpy, rewardsNumpy, action, predictionPDF
 
-def appendInputArray(inputsNumpy, action, observations, attempt):
-    actionToTake = action.sample()
+def appendInputArray(inputsNumpy, actionToTake, observations, attempt):
 
     if type(actionToTake) == int:
         bufferActionToTake = np.array([actionToTake])
     else:
         bufferActionToTake = actionToTake
-    bufferAction = np.array([bufferActionToTake])
+    bufferAction = np.array([actionToTake])
     bufferStateCurrent = np.asarray([observations])
+    bufferAction = np.reshape(bufferAction, ([1,1]))
     
     bufferInput = np.append(bufferAction, bufferStateCurrent, axis = 1)
 
@@ -80,7 +80,7 @@ def appendInputArray(inputsNumpy, action, observations, attempt):
     elif attempt > 0:
         inputsNumpy = np.append(inputsNumpy, bufferInput, axis = 0)
 
-    return inputsNumpy, bufferInput, actionToTake
+    return inputsNumpy, bufferInput
 
 def appendRewardsArray(rewardsNumpy, rewards, attempt):
     bufferRewards = np.asarray([rewards])
