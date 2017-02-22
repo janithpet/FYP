@@ -195,6 +195,7 @@ class plot:
         ax1.set_ylabel('State', fontsize=16)
         ax2.set_ylabel('Square Absolute Error', fontsize=16)
         pylab.savefig('./Plots/allplot_%d.svg' %self.plot_counter, format='svg')
+        pylab.savefig('./Plots/allplot_%d.eps' %self.plot_counter, format='eps')
         plt.show()
 
 
@@ -215,3 +216,4 @@ class plot:
         plt.ylabel('State / unit', fontsize=16)
 
         pylab.savefig('./Plots/final_solution_%d.svg' %self.plot_counter, format='svg')
+        pylab.savefig('./Plots/final_solution_%d.eps' %self.plot_counter, format='eps')
