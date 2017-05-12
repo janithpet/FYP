@@ -17,6 +17,9 @@ import GPy
 #   6)termination_function: A class that defines the termination condition. This uses a class because it allows this condition to be defined in terms of any of the variables stored within the class.
 #   7)goal_states:          The goal states, as a vector of size 2)
 #   8)initial_states:       The initial states, as a vector of size 2)
+#   9)error_limit:          This is a number that sets the error limit.
+
+#To run the combination of model free and model based RL, use objective_function_foo. The present version does not evaluate the long term variance. If only wanting model based, run objective_function.
 
 class rl_components:
 
@@ -231,9 +234,6 @@ class rl_components:
             difference = self.current_states
         return difference
 
-
-
-
     def objective_function_foo(self, policy_parameters):
         terminate = False
         self.counter = 1
@@ -412,7 +412,7 @@ class plot:
             pylab.savefig('./Plots/final_solution_%d.svg' %self.plot_counter, format='svg')
             pylab.savefig('./Plots/final_solution_%d.pdf' %self.plot_counter, format='pdf')
 
-#Given a set of policy parameters, this function plots the shape of the policy for the one dimensional policy. 
+#Given a set of policy parameters, this function plots the shape of the policy for the one dimensional policy.
         def plot_policy(self, policy_parameters, steps):
             test_states = np.linspace(0,120,steps)
             test_states = np.reshape(test_states, ([steps,1]))
